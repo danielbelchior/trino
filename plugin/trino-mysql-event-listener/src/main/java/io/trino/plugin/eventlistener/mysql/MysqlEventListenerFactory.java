@@ -65,6 +65,7 @@ public class MysqlEventListenerFactory
                     jsonCodecBinder(binder).bindListJsonCodec(QueryInputMetadata.class);
                     jsonCodecBinder(binder).bindJsonCodec(QueryOutputMetadata.class);
                     jsonCodecBinder(binder).bindListJsonCodec(TrinoWarning.class);
+                    configBinder(binder).bindConfig(MysqlEventListenerConfig.class);
                     binder.bind(QueryDao.class).toProvider(QueryDaoProvider.class).in(Scopes.SINGLETON);
                     binder.bind(MysqlEventListener.class).in(Scopes.SINGLETON);
                 });

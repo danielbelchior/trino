@@ -15,6 +15,7 @@ package io.trino.plugin.eventlistener.mysql;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static io.airlift.configuration.testing.ConfigAssertions.assertFullMapping;
@@ -28,17 +29,20 @@ final class TestMysqlEventListenerConfig
     void testDefaults()
     {
         assertRecordedDefaults(recordDefaults(MysqlEventListenerConfig.class)
-                .setUrl(null));
+                .setUrl(null)
+                .setPruneColumns(List.of()));
     }
 
     @Test
     void testExplicitPropertyMappings()
     {
         Map<String, String> properties = Map.of(
-                "mysql-event-listener.db.url", "jdbc:mysql://example.net:3306");
+            "mysql-event-listener.db.url", "jdbc:mysql://example.net:3306",
+            "mysql-event-listener.db.prune-columns", "column1,column2");
 
         MysqlEventListenerConfig expected = new MysqlEventListenerConfig()
-                .setUrl("jdbc:mysql://example.net:3306");
+                .setUrl("jdbc:mysql://example.net:3306")
+                .setPruneColumns(List.of("column1", "column2"));
 
         assertFullMapping(properties, expected);
     }

@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static io.airlift.configuration.ConfigBinder.configBinder;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -64,7 +65,8 @@ public class MysqlEventListener
             JsonCodec<Map<String, String>> sessionPropertiesJsonCodec,
             JsonCodec<List<QueryInputMetadata>> inputsJsonCodec,
             JsonCodec<QueryOutputMetadata> outputJsonCodec,
-            JsonCodec<List<TrinoWarning>> warningsJsonCodec)
+            JsonCodec<List<TrinoWarning>> warningsJsonCodec,
+            MysqlEventListenerConfig config)
     {
         this.dao = requireNonNull(dao, "dao is null");
         this.clientTagsJsonCodec = requireNonNull(clientTagsJsonCodec, "clientTagsJsonCodec is null");
@@ -155,7 +157,8 @@ public class MysqlEventListener
                 stats.getFailedCumulativeMemory(),
                 stats.getCompletedSplits(),
                 context.getRetryPolicy(),
-                createOperatorSummariesJson(metadata.getQueryId(), stats.getOperatorSummaries()));
+                createOperatorSummariesJson(metadata.getQueryId(), stats.getOperatorSummaries()),
+                configBinder(null));
         dao.store(entity);
     }
 

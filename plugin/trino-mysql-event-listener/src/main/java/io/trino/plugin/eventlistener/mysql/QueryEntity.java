@@ -13,6 +13,7 @@
  */
 package io.trino.plugin.eventlistener.mysql;
 
+import java.util.List;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -102,6 +103,7 @@ public class QueryEntity
 
     private final String retryPolicy;
     private final Optional<String> operatorSummariesJson;
+    private final List<String> pruneColumns;
 
     public QueryEntity(
             String queryId,
@@ -171,7 +173,8 @@ public class QueryEntity
             double failedCumulativeMemory,
             int completedSplits,
             String retryPolicy,
-            Optional<String> operatorSummariesJson)
+            Optional<String> operatorSummariesJson,
+            List<String> pruneColumns)
     {
         this.queryId = requireNonNull(queryId, "queryId is null");
         this.transactionId = requireNonNull(transactionId, "transactionId is null");
@@ -241,6 +244,11 @@ public class QueryEntity
         this.completedSplits = completedSplits;
         this.retryPolicy = requireNonNull(retryPolicy, "retryPolicy is null");
         this.operatorSummariesJson = requireNonNull(operatorSummariesJson, "operatorSummariesJson is null");
+        this.pruneColumns = requireNonNull(pruneColumns, "pruneColumns is null");
+    }
+
+    private boolean shouldPrune(String column) {
+        return pruneColumns.contains(column);
     }
 
     public String getQueryId()
@@ -513,43 +521,59 @@ public class QueryEntity
         return physicalInputBytes;
     }
 
-    public long getPhysicalInputRows()
-    {
+    public long getPhysicalInputRows() {
+        if (shouldPrune("physicalInputRows")) {
+            return 0;
+        }
         return physicalInputRows;
     }
 
-    public long getInternalNetworkBytes()
-    {
+    public long getInternalNetworkBytes() {
+        if (shouldPrune("internalNetworkBytes")) {
+            return 0;
+        }
         return internalNetworkBytes;
     }
 
-    public long getInternalNetworkRows()
-    {
+    public long getInternalNetworkRows() {
+        if (shouldPrune("internalNetworkRows")) {
+            return 0;
+        }
         return internalNetworkRows;
     }
 
-    public long getTotalBytes()
-    {
+    public long getTotalBytes() {
+        if (shouldPrune("totalBytes")) {
+            return 0;
+        }
         return totalBytes;
     }
 
-    public long getTotalRows()
-    {
+    public long getTotalRows() {
+        if (shouldPrune("totalRows")) {
+            return 0;
+        }
         return totalRows;
     }
 
-    public long getOutputBytes()
-    {
+    public long getOutputBytes() {
+        if (shouldPrune("outputBytes")) {
+            return 0;
+        }
         return outputBytes;
     }
 
-    public long getOutputRows()
-    {
+    public long getOutputRows() {
+        if (shouldPrune("outputRows")) {
+            return 0;
+        }
         return outputRows;
     }
 
-    public long getWrittenBytes()
-    {
+    public long getWrittenBytes() {
+        if (shouldPrune("writtenBytes")) {
+            return 0;
+        }
         return writtenBytes;
     }
 

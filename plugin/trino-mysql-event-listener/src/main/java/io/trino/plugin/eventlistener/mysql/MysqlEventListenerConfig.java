@@ -15,15 +15,18 @@ package io.trino.plugin.eventlistener.mysql;
 
 import com.mysql.cj.jdbc.Driver;
 import io.airlift.configuration.Config;
+import io.airlift.configuration.ConfigDescription;
 import io.airlift.configuration.ConfigSecuritySensitive;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class MysqlEventListenerConfig
 {
     private String url;
+    private List<String> pruneColumns = List.of();
 
     @NotNull
     public String getUrl()
@@ -36,6 +39,20 @@ public class MysqlEventListenerConfig
     public MysqlEventListenerConfig setUrl(String url)
     {
         this.url = url;
+        return this;
+    }
+
+    public List<String> getPruneColumns()
+    {
+        return pruneColumns;
+    }
+
+    @ConfigDescription("List of columns to prune from the event data. Comma-separated list of column names.")
+    @Config("mysql-event-listener.db.prune-columns")
+    public MysqlEventListenerConfig setPruneColumns(List<String> pruneColumns)
+    {
+
+        this.pruneColumns = pruneColumns;
         return this;
     }
 
